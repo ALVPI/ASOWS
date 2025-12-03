@@ -1,0 +1,60 @@
+# ============================================
+# TEXMAKER / LATEX - GITIGNORE
+# ============================================
+
+# Archivos auxiliares básicos
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+
+# Archivos de sincronización
+*.synctex.gz
+*.synctex
+
+# Archivos de bibliografía
+*.bbl
+*.blg
+
+# Archivos de presentaciones (beamer)
+*.nav
+*.snm
+*.vrb
+
+# Archivos de latexmk
+*.fls
+*.fdb_latexmk
+
+# Archivos intermedios
+*.dvi
+*.ps
+
+# Archivos de respaldo
+*~
+*.backup
+*.bak
+auto/
+
+# Archivos específicos de TexMaker
+*.txss
+*.xwm
+
+# Si usas listings
+*.lol
+
+# Archivos de índices y referencias cruzadas
+*.idx
+*.ilg
+*.ind
+
+# Si usas arara, texify, etc.
+*.brf
+*.cb
+*.cb2
+*.lb
+
+# Directorios temporales
+_temp/
+tmp/

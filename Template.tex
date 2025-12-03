@@ -1,0 +1,358 @@
+\documentclass[10pt]{article}
+
+% Idioma y codificación
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+% Márgenes
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+% Gráficos
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage[hypcap]{caption}
+
+
+% Listings para código
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{capt-of}
+\lstdefinestyle{terminal}{
+	backgroundcolor=\color{gray!10},
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	frame=single,
+	columns=fullflexible,
+	morecomment=[l]{//}
+}
+\usepackage{listings}
+\lstset{
+	inputencoding=utf8,
+	extendedchars=true,
+	literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+}
+
+% Hipervínculos
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,
+	urlcolor=cyan,
+}
+
+% Encabezados y pies de página
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[R]{\thepage}
+
+% Formato de títulos
+\usepackage{titlesec}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\hspace{1em}\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries}{\hspace{2em}\thesubsubsection}{1em}{}
+
+% Datos de la portada
+\title{\textbf{CREACIÓN DE UN DIRECTORIO ACTIVO CON
+		WINDOWS SERVER 2022 }}
+\author{\textbf{\small Álvaro López Primo}}
+\date{}
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+\definecolor{win11color}{RGB}{245, 249, 255}    % Azul muy claro
+\definecolor{win22color}{RGB}{245, 255, 249}    % Verde muy claro
+\definecolor{rowcolor1}{RGB}{248, 248, 248}     % Gris muy claro
+\definecolor{rowcolor2}{RGB}{255, 255, 255}     % Blanco
+\definecolor{headercolor}{RGB}{240, 240, 240}   % Gris para encabezado
+\definecolor{bordercolor}{RGB}{150, 150, 150}   % Color de bordes
+
+\begin{document}
+	
+	\begin{titlepage}
+		\centering
+		\includegraphics[scale=0.3]{Recursos/UVA-3881270087.pdf}\\[0.5cm]
+		\rule{\linewidth}{0.2mm}\\[0.4cm]
+		{\huge\bfseries \thetitle}\\
+		\rule{\linewidth}{0.2mm}\\[1.5cm]
+		{\Large\bfseries Ingeniería informática}\\[0.3cm]
+		{\Large\bfseries Tecnologías de la información y la comunicación}\\[1cm]
+		{\Large \theauthor}\\[1.5cm]
+		{\Large \thedate}
+	\end{titlepage}
+	
+	\renewcommand{\contentsname}{Índice}
+	\tableofcontents 
+	\newpage
+\section{Introducción}
+	En este apartado responderemos a algunas preguntas antes de empezar con el proceso de instalación de windows server 2022.
+	\subsection{¿Cuáles son las principales diferencias entre Windows server 2022 y un Windows 11?}
+		Para respodner a esta pregunta, lo primero que tenemos que tener claro es que el \textbf{kernel} de  ambos productos de software de Microsft es el mismo, pero las tareas para las que están especialidas no son las mismas. 
+		
+		\begin{center}
+			\begin{minipage}{0.4\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/OIP-2538521300.png}
+				\captionof{figure}{Distribución de los anillos dentro de un sistema operativo}
+				\label{fig:ejemplo}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.55\textwidth}
+				Para entender esto bien, tenemos que recordar el concepto de los \underline{anillos dentro de un sistema operativo}, los cuales definen la estrcutura de mismo, agrupando los niveles de mayor a menor privilegio. \\
+				El kenel, se encuentra en el anillo cero, es decir aquél más cercano a la CPU, por ende el que más "poder" tiene (en última instancia será el encargado de realizar las operaciones sobre el hardware del dispositivo, mediante interrupciones o diferentes métodos, en función de las necesidades de cada proceso. ) \\ Que compartan el kernel implica que comparten el mismo \textit{ntoskrnl.exe} (en windows este ejecutable es el manejador del kernel),la misma abtracción de hardware (planificación para el \textit{multithreading, manejo de interrupciones\ldots})
+			\end{minipage}
+		\end{center}
+		Ahora bien, si el kernel es el mismo ¿por qué existen dos versiones diferentes de Windows? Esta pregunta se responde de manera bastante fácil, puesto que el motivo es el propósito para el que han sido diseñados estos productos de software por parte de Microsft. El \textit{Windows 11} es un software pensado para clientes, es decir dispositivos o hosts individuales, los cales, presentan un hardware comedido para un uso ofimático o para tareas poco pesadas (computacionalmente hablando), mientras que \textit{Windows Server} está pensado como orquestador, es decir, para ofrecer un servicio a diferentes clientes, los cuales realizaran tareas sobre la máquina que hostea este sisitema operativo, está pensado para gestionar los recursos de la máquina donde ha sido instalado así como para ofrecer servicio a múltiples hosts clientes. Para mejorar la legibilidad de esta comparativa, he decidido crear una tabla donde se muestran las principales diferencias:
+	\begin{table}[H]
+		\centering
+		\renewcommand{\arraystretch}{1.3}
+		\rowcolors{2}{rowcolor1}{rowcolor2}
+		\arrayrulecolor{bordercolor}
+		\setlength{\arrayrulewidth}{0.8pt}
+		\begin{tabularx}{\textwidth}{|>{\RaggedRight}p{3.2cm}|>{\RaggedRight\columncolor{win11color}}p{6.5cm}|>{\RaggedRight\columncolor{win22color}}p{6.5cm}|}
+			\hline
+			\rowcolor{headercolor}
+			\textbf{Ámbito} & \textbf{Windows 11 (cliente)} & \textbf{Windows Server 2022} \\
+			\hline
+			\textbf{Licensing model} & Retail/OEM por dispositivo; sin límite de conexiones & Servidor + CAL (usuario o dispositivo); valida conexiones \\
+			\hline
+			\textbf{Roles de red} & Ninguno; límite 20 conexiones SMB & AD DS, DNS, DHCP, RRAS, NLB, S2D, Storage Replica… \\
+			\hline
+			\textbf{Seguridad por defecto} & Secured-core PC optativo; HVCI manual & Secured-core Server habilitado; VBS + DMA Guard \\
+			\hline
+			\textbf{Hyper-V} & $\leq$ 2 CPU / 2 TB RAM; sin réplica ni Live Migration & 48 TB RAM por VM; réplica, nested, SR-IOV, SET \\
+			\hline
+			\textbf{Almacenamiento kernel} & NTFS + ReFS deshabilitado arranque; sin dedup & ReFS v3 block-cloning; dedup; S2D; Storage Replica \\
+			\hline
+			\textbf{Protocolo de ficheros} & SMB 3.1.1 básico & SMB 3.1.1 + SMB over QUIC (UDP-TLS 1.3) \\
+			\hline
+			\textbf{Quantum planificador} & Corto, prioriza latencia interactiva & Largo, prioriza throughput; timer 100 Hz \\
+			\hline
+			\textbf{Interfaz por defecto} & Shell moderno, Store, Widgets & Desktop Experience opcional; recomendado Server Core \\
+			\hline
+			\textbf{Ciclo de patch} & 1 actualización funcional/año (H2) & Canal LTSC; 10 años soporte; parches acumulativos \\
+			\hline
+			\textbf{Integración cloud} & M365, OneDrive, Teams consumer & Azure Arc, JEA, Windows Admin Center, HCI \\
+			\hline
+		\end{tabularx}
+		\caption{Comparativa entre Windows 11 y Windows Server 2022}
+		\label{tab:windows_comparison_vertical}
+	\end{table}
+\section{Instalación de \textit{Windows server} sobre la máquina virtual}
+	En el guión de la práctica se comenta que hay diversas opciones para la instalación del software, las máquinas virtuales propias de la asignatura (mediante matrix) o una versión \textit{offline} que se basa en la instalación del software en una partición o empleando los recursos de mi host.\\ 
+	Finalmente me he decantado por la máquina virtual puesto que en mi pc no tengo el espacio suficiente como para poder hacer una partición dedicada para la práctica, por lo que a partir de ahora, todas las capturas de \textit{Windows Server} serán también capturas de la máquina virtual de la asignatura.\\ 
+	\subsection{Formateo de la máquina virtual}
+	\begin{center}
+		\begin{minipage}{0.4\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{Recursos/SeleccionISO}
+			\captionof{figure}{Seleccionaremos la ISO de Windows Server.}
+			\label{seleccionOS}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.55\textwidth}
+		Anteriormente la máquina virtual de la asignuta ha sido empleda para realizar los guiones de prueba sobre un Ubuntu, por lo que el primer paso es formatear la máquina e instalar \textit{Windows Server}. Como se indica en el guión, lo que haremos será entra en la BIOS de la máquina virtual y en el \textit{Boot Menu} elegir la opción de \textit{UEFI QEMU DVDROM}, con esto lo que haremos será iniciar el instalador de \textit{Windows Server} desde el CD y podremos comenzar con el proceso de instalación.
+		\end{minipage}
+	\end{center}
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/SeleccionVersionWindowsServer.png}
+			\caption{Seleccionamos la versión de \textit{Windows Server} que se nos indica en el enunciado}
+			\label{versionWS}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/ProblemaInstalacionWindowsServer.png}
+			\caption{Problema con la instalación, no reconoce que haya discos duros en la máquina virtual.}
+			\label{ProblemaInstalacionWS}
+		\end{minipage}
+	\end{figure}
+
+	Una vez que hemos decidido qué versión de \textit{WS} vamos a instalar, y que deseamos borrar todo el disco duro sin mantener particiones o datos de las prácticas previas, lo que nos encontramos es que \textit{no reconoce ninguno disco}, esto no es posible puesto que previamente hemos trabajado con esta máquina virtual y teníamos 60GB de espacio en la misma, por lo que  me decanto con un problema de \textit{drivers} es decir los "traductores" que permiten al OS emplear el hardware del pc. \\
+	En el guión de la práctica ya se mencionaba esta posiblidad por lo que realizaremos los pasos que ahí se muestran
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/virtioiso.png}
+			\caption{Cargamos el disco (en el mismo menú en el que hemos seleccionado la imagen del \textit{WS})}
+			\label{CargarElCDDrivers}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/seleccionDrier.png}
+			\caption{Una vez que ya tenemos esto, volvemos a la parte de Console dento de promox y buscamos los drivers para los discos duros}
+			\label{SeleccionarDriver}
+		\end{minipage}
+	\end{figure}
+		En las opciones de driver para el disco duro, tenemo diferenes versiones, lo que debemos hacer es seleccionar la que sale seleccionada pueste que se diferencian en el año en el que han sido compilados. En nuestro caso como estamos instalando la versión de 2022, para que el driver de los menores problemas de compatibilidad posibles seleccionamos la \textit{2k22}
+			\begin{center}
+			\begin{minipage}{0.4\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/NuevoEsquemaParticiones.png}
+				\captionof{figure}{Nuevo esquema de particiones}
+				\label{NuevasParticiones}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.55\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/ErrorDisco.png}
+				\captionof{figure}{Error 0x80300001 = “Windows no ve el disco que acabas de seleccionar”, reconoce el disco porque está cargado en RAM pero realmente no puedo isntalar el \textit{WS}, por lo que toca volver a ir al apartado de hardware y seleccionar la ISO de \textit{Windows Server} para que ya reconozca el disco y se pueda proceder con la instalación}
+				\label{ErrorInstalacion}
+			\end{minipage}
+		\end{center}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.6\linewidth]{Recursos/InstalacionCompletada.png}
+			\caption{La contraseña de la cuenta de administrador (la cuál va a tener como \textit{password: wmLG9N7n}) }
+		\end{figure}
+	\subsection{Intalación de drivers}
+		\begin{center}
+			\begin{minipage}{0.55\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/driversv2}
+				\captionof{figure}{Seleccionaremos los drivers de red.}
+				\label{seleccionDriversRed}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.4\textwidth}
+				Una vez que ya hemos finalizado la instalación, me he dado cuenta de que faltan funcionalidades como puede ser la de red.\\ Al igual que hicimos para que el instalador reconociese los discos, volvemos a cargar \textit{Virtio.ISO} en el apartado de \textit{hardware}. Posteriormente vamos al \textbf{Administrador de dispositivos} y actualizamos los controladores de de todos aquellos dispositivos que aparezcan con una exclamación (drivers de red, dispositivos de comunicación simples PCI y dispositivo PCI). El proceso es el mismo 
+			\end{minipage}
+		\end{center}
+		Los dispositiovs que nos fallaban se encargan de: 
+		\begin{itemize}
+			\item \textit{Controladora Ethernet (Ethernet Controller)}: Necesario para la comunicación con la red.
+			\item \textit{Controladora simple de comunicaciones PCI (Simple Communications Controller PCI)}: Relacionado con las tareas de mantenimiento y de administración remota.
+			\item \textit{Dispositivo PCI (PCI Device)}: Dedicado a la comunicación entre el dispositivo conectado por PCI (una tarjeta de sonido por ejemplo).
+		\end{itemize}
+		
+	\subsection{Administrador del servidor}
+		Una vez que tenemos todo instalado (de momento), vamos a investigar qué es el panel de \textit{Administrador del servidor.}
+		\subsection{Servidor Local}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.6\linewidth]{Recursos/ServerLocal}
+			\caption{En este menú vemos toda la información relacionada con nuestra máquina virtual.}
+			\label{ServerLocal}
+		\end{figure}
+		En esta imagen podemos mirar que tenemos un procesor típico de servidores, un firewall activado y la función de escritorio remoto la tenemos desactivada. 
+			\begin{center}
+				\begin{minipage}{0.55\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/enableRDP}
+					\captionof{figure}{Habilitamos el servicio de escritorio remoto}
+					\label{enableRDP}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.4\textwidth}
+					Esta es la versión propietaria de \textit{Microsoft} llamada \textit{\textbf{RDP} (Remote Desktop Protocol)} de tal manera que permite a nuestra máquina establecer una conexión remota con otro pc que se encuentre dentro de una red, permitiéndote el acceso total al mismo, lógicamente esto está desactivado por motivos de seguridad, pero como nosotros vamos a administrar ese servicio \textbf{procedemos a habilitar el escritorio remoto.} con el consecuente aviso de que se va a abrir una excepción en el firewall para que se pueda emplear este servicio.
+				\end{minipage}
+			\end{center}
+		\subsubsection{Cambio del nombre del equipo y del grupo de trabajo}
+			\begin{center}
+				\begin{minipage}{0.55\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/CambioNombreYWorkGroup}
+					\captionof{figure}{Cambiamos el nombre de la máquina y el del grupo de trabajo}
+					\label{WorkGroup}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.4\textwidth}
+					¿Qué significa que hagamos estos cambios?\\ 
+					El nombre del Equipo es como se nos va a poder identificar dentro de la red, mientras que el  \textit{miembro de} indica a qué grupo de trabajo va a pertenecer nuestro servidor.\\ En mi caso, como no existe ninguno, lo que hace el OS internamente es crear un grupo de trabajo vacío y se une a él.
+				\end{minipage}
+			\end{center}
+		\subsubsection{Información sobre la red}
+			\begin{center}
+			\begin{minipage}{0.55\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/NetWorkInfo}
+				\captionof{figure}{Información de la dirección IPv4 de nuestra máquina}
+				\label{IPv4}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.4\textwidth}
+				Siguiendo el guión tenemos que mirar la información de la dirección IP de nuestra máquina, si nos fijamos en la captura, sólo tenemos configurada un dirección IPv4, la cual es la \textbf{10.0.38.2}, pero ojo, esta es una dirección IP \underline{privada} es decir, identifica a la máquina virtual pero dentro de la subred (LAN) de la UVa(más probablemente de los servidores de la escuela de ingeniería informática), no de cara a internet, de tal manera que para poner conectarnos a internet con esta IP el cortafuegos deberá traducir esta IPprivada a una pública que sea accesible desde Internet, para lo cuál utiliza la máscara de subred, para identificar la red y el dispositivo dentro de la misma.
+			\end{minipage}
+		\end{center}
+		\subsubsection{Cambio de puerto del protocolo \textit{RDP}}
+			\begin{center}
+			\begin{minipage}{0.55\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/WKPRDP}
+				\captionof{figure}{Cambio de puerto del \textit{RDP}}
+				\label{WKPRDP}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.4\textwidth}
+				Como se nos indica en el guión, el \textit{RDP}, emplea \textit{tcp} el puerto 3389, lo cual \underline{\textit{WKP}}  \textit{Well Know Port} (puertos cuyo uso está estandarizado para ciertos servicios) puesto que se sale del rango de los 1025 (0-1024) primeros puertos,  pero sí es conocido en los sistemas de \textit{Microsoft}.\\
+			El que no sea uno de los \textit{WKP} es un arma de doble filo, porque permite a un usuario sin permisos de administrador (el equivalente a \textit{sudo} en el OS de Linux)  conectarse de manera remota a nuestra máquina, lo que hace que si se sufre un ataque nuestro \textit{host} que expuesto de manera sencilla.\\  Lo que sí que es una ventaja es que el OS no tiene que emplear una multiplexión de puertos para redirigir las peticiones en caso de que otro servicio requiera el uso de dicho puerto.\\ 
+			En mi caso, prefiero mover el servicio a un \textit{WKP} para forzar que el usuario tenga permisos de administrador o de \textit{sudo} para realizar la conexión remota
+			\end{minipage}
+		\end{center}
+	\subsection{Configuración del firewall}
+		Si recordamos, en la el servidor local (\ref{ServerLocal}) tenemos habilitado un firewall, vamos a proceder a configurarlo, para permitir conexiones.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\linewidth]{Recursos/Firewall1}
+				\caption{Entramos en la opción de firewall y nos vamos a opciones avanzadas}
+				\label{FirewallBase}
+			\end{figure}
+		\subsubsection{Puerto 22$\rightarrow$ tcp/22}
+			Este puerto es el estándar para permitir conexiones mediante el protocolo \textit{SSH (Secure Shell)}, el cual permite establecer conexiones remotas entre \textit{hosts}, traducido sería decir que nos permite conectarnos de manera remota a otro dispositivo.\\ Por defecto el Firewall no permite conexiones a ese puerto.
+			\begin{center}
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/regla221}
+					\captionof{figure}{Primer paso para establecer la regla, decir que vamos a aplicarla sobre un puerto}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/regla222}
+						\captionof{figure}{Especificamos el protocolo y el puerto, en nuestro caso tcp (puesto que a ser seguro necesita establecer el \textit{handshake} y confirmación de recepción) y el puerto 22}
+				\end{minipage}
+			\end{center}
+			\begin{center}
+				\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/regla223}
+					\captionof{figure}{Establecemos el dominio de la norma, para la máquina virtual, en cualquier caso }
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/regla224}
+						\captionof{figure}{Le añadimos un nombre y descripción para poder localizarla una vez que se ha añadido}
+				\end{minipage}
+			\end{center}
+			\subsection{Prueba de conexión remota empleando la aplicación Escritorio Remoto}
+	\section{Configuración del \textit{HIPERVISOR HYPER-V} }
+		\subsection{¿Qué son los Roles en un \textit{Windows Server}}
+		\subsection{¿Qué son las caracterísiticas en \textit{Windows Server}}
+\end{document}
+
+
+%https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/5073f4ed-1e93-45e1-b039-6e30c385867c
+%https://www.palentino.es/pdfs/Windows-Server-2022-Libro-Castellano-by-palentino.pdf
+%https://learn.microsoft.com/en-us/windows-server/
+%https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/overview

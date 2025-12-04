@@ -348,9 +348,187 @@
 			\subsection{Prueba de conexión remota empleando la aplicación Escritorio Remoto}
 	\section{Configuración del \textit{HIPERVISOR HYPER-V} }
 		\subsection{¿Qué son los Roles en un \textit{Windows Server}}
+			En el contexto de un servidore son \textbf{el conjunto primario de servicios de software y configuraciones}, un ejemplo de esto es el \textit{Active Directory} o un \textit{servidor DHCP}. De tal manera que hace que el servidor se encargue de una tarea específica.
 		\subsection{¿Qué son las caracterísiticas en \textit{Windows Server}}
+			Son programas o herramientas que  o bien complementan las funciones de un \textit{Role} o que proporcionan herramientas las cuales son útiles de manera independiente. En el contexto de un \textit{WS} tenemos como ejemplo el \textit{.NET Framework} que es esencial para algunas herramientas de diagnóstico o gestión.\\ Ojo, que estas características son para los administradores del sistema no tienen por qué ser para los usuarios del mismo.
+		\subsubsection{Agregar \textit{roles} y \textit{características} a nuestro servidor}
+			\begin{figure}[H]
+				\centering
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/AgregarRol}
+					\caption{Menú para seleccionar los \textit{roles} y \textit{características}}
+					\label{annadirroles}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/hypervisor}
+					\caption{Instalamos las caracteristicas que se nos indica en el guión tras seleccionar las intalaciones por roles o características}
+					\label{instalarRecursos}
+				\end{minipage}
+			\end{figure}
+			\begin{center}
+				\begin{minipage}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/Conmutador}
+					\captionof{figure}{Seleccionaremos el conmutador como indica el guión.}
+					\label{conmutadohyper}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.55\textwidth}
+					\textit{Hyper-V} es una tecnología de virtualización de Windows, que permite alojar y ejecutar otras \textit{Virtual Machines}(VM) .\\
+					El \textbf{conmutador de red}  funciona como un \textit{switch} permitiendo que las máquinas virtuales se comuniquen entre sí y que las mismas tengan conexión a internet (empleando nuestra tarjeta de red para ello).
+				\end{minipage}
+			\end{center}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\linewidth]{Recursos/ConfirmarInstalacion}
+				\caption{Un resumen de lo que vamos a instalar en nuestro WS, tras la instalación toca reiniciar la máquina para que se apliquen estos cambios.}
+			\end{figure}
+		\subsubsection{Importar \textit{VM} disponibles}
+			Tras permitir la \textit{detección de redes} (es simplemente abrir el menú y darle a la opción) permitiendo ser detectado por otros dispositivos de la red y poder acceder a tus recursos compartidos, aunque esto sea un submenú dentro de la carpeta de red, en verdad lo que estamos haciendo es configurar el \textit{firewall} y a la vez expone a nuestra máquina a ser descubierta por una exploración básica de la red.
+			\begin{figure}[H]
+				\centering
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/accederACarpetasCompartidas}
+					\caption{Introducimos las credenciales de acceso para acceder a esta máquina Usuario: usuario y contraseña: Passw0rd}
+					\label{accederCarpetasCompartidas}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/ContenidoVM}
+					\caption{Los directorios para las máquinas virtuales, como se indica en el guión copiamos \textit{TinyWin11} a nuestro equipo}
+					\label{vmdisponibles}
+				\end{minipage}
+			\end{figure}
+			\begin{figure}[H]
+				\centering
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/importar1}
+					\caption{Vamos al menú de administrar el \textit{Hyper-V} click derecho sobre nuestro grupo e importar máquina virtual}
+					\label{importacion1}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/importar2}
+					\caption{Las opciones que nos da para importar la \textit{VM}}
+					\label{importacion2}
+				\end{minipage}
+			\end{figure}
+			Si nos damos cuenta, aparecen varias opciones para importar la máquina virtual, voy a explicarlas poco a poco:
+			\begin{itemize}
+				\item Registrar la máqina virtual (usar el identificador único existente): Reutiliza la \textit{VM} exactamente como fue exportada, es decir, la copiamos tal cual.
+				\item Restaurar la máquina virtual (usar el identificador único existente): Reemplaza una \textit{VM} existente por una nueva versión, sobreescribiendo la máquina antigua si es que comparten el mismo \textit{ID}
+				\item Copiar la máquina virtual (crear un identificador único nuevo): Crea una nueva copia de la \textit{VM} (creando un nuevo identificador único), de tal manaera que la clonamos para usarla como dos instancias diferentes.
+			\end{itemize}
+			\begin{figure}[H]
+				\centering
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/importar3}
+					\caption{Se ha finalizado la instalación}
+					\label{importacion3}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/TiniWindows11}
+					\caption{Damos a conectar la máquina virtual desde el menú de nuestra máquina en el administrador de \textit{hyper-v}}
+					\label{funcionavmWindows}
+				\end{minipage}
+			\end{figure}
+		\subsubsection{Instalación de la VM con Ubuntu}
+		Vamos a repetir el proceso, copiamos la imagen desde la máquina de red y volvemos al menú de \textit{hyper-v}
+		\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/importar6}
+				\caption{Comenzamos el proceso de importar la máquina virtual de Ubuntu}
+				\label{importacion6}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/importar5}
+				\caption{Damos a conectar la máquina virtual desde el menú de nuestra máquina en el administrador de \textit{hyper-v}}
+				\label{funcionavmUbutnu}
+			\end{minipage}
+		\end{figure}
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.6\textwidth]{Recursos/AmbasVMCorriendo}
+			\caption{Ambas \textit{VM} corriendo en el el \textit{WS}}
+		\end{figure}
+	\subsection{Ips de la máquinas virtuales en el servidor}
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/DireccionIPUBUNTU}
+			\caption{Ejecución del comando \textit{ip addr} para sacar la dirección ip de la \textit{VM}}
+			\label{UbuntuIP}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=0.6\textwidth]{Recursos/DireccionIPWindows}
+			\caption{Dirección IP de la máquina con Windows}
+			\label{IpWindows}
+		\end{minipage}
+	\end{figure}
+	\subsection{Comunicación entre la \textit{VM} y el servidor}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/sshExitoso}
+			\caption{Realizo un ssh para comprobar que el conmutador en verdad sí que funciona porque permite comunicación entre el servidor y una }
+		\end{figure}
+	\subsection{Comunicación entre \textit{VM}s dentro del servidor}
+		\subsubsection{Configuración previa en la máquina virtual Windows 11}
+			\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/openssh}
+				\caption{Intalacion del servicio openssh para windows }
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/opensshservice}
+				\caption{Establecemos que el servicio se inicie de manera automática con la máquina.}
+			\end{minipage}
+		\end{figure}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/rule}
+			\caption{Aplicamos esta regla en el firewall para que permita el trafíco por el puerto 22.}
+		\end{figure}
+		\subsubsection{\textit{sshs} entre vms}
+		\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/pingWindowsUbuntu}
+				\caption{ssh de la máquina Ubuntu a la de Windows11}
+				\label{Ubutnu}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/pingWindowsUbunto}
+				\caption{ssh de la máquina Windows 11 a la Ubuntu}
+				\label{conectar}
+			\end{minipage}
+		\end{figure}
+	
 \end{document}
-
 
 %https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/5073f4ed-1e93-45e1-b039-6e30c385867c
 %https://www.palentino.es/pdfs/Windows-Server-2022-Libro-Castellano-by-palentino.pdf

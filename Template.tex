@@ -483,12 +483,6 @@
 			\label{IpWindows}
 		\end{minipage}
 	\end{figure}
-	\subsection{Comunicación entre la \textit{VM} y el servidor}
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=\textwidth]{Recursos/sshExitoso}
-			\caption{Realizo un ssh para comprobar que el conmutador en verdad sí que funciona porque permite comunicación entre el servidor y una }
-		\end{figure}
 	\subsection{Comunicación entre \textit{VM}s dentro del servidor}
 		\subsubsection{Configuración previa en la máquina virtual Windows 11}
 			\begin{figure}[H]
@@ -522,12 +516,155 @@
 			\hfill
 			\begin{minipage}{0.45\textwidth}
 				\centering
-				\includegraphics[width=\textwidth]{Recursos/pingWindowsUbunto}
+				\includegraphics[width=\textwidth]{Recursos/pingWindowsUbuntu}
 				\caption{ssh de la máquina Windows 11 a la Ubuntu}
 				\label{conectar}
 			\end{minipage}
 		\end{figure}
-	
+	No he conseguido hacer un ping de la máquina ubuntu a la windows, por ninguno de los puertos y no me devuelve conectividad 
+	\subsection{Comunicacion desde el servidor a las dos \textit{VM}s}
+	En la máquina con ubuntu es tan sencillo como hacer un ssh desde el \textit{PowerShell} con permisos de administrador, sin embargo como no he conseguido hacer funcionar el servicio \textit{OpenSSH}  he  empleado la conexión al escritorio remoto de windows (habilitando previamente esta característica en la máquina virtual.)
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/sshServerUbuntu}
+			\caption{ssh desde el \textit{WS} a la \textit{VM} con Ubuntu}
+			\label{UbutnuDesdeServer}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/EscritorioRemotoExitoso}
+			\caption{Conexión del escritorio remoto desde nuestro \textit{WS} a la máquina virtual de Windows }
+			\label{conectarWindowsAWindows}
+		\end{minipage}
+	\end{figure}
+	\subsection{Creación de una red interna para las máquinas virtuales anidades}
+		\subsubsection{Creación de un conmutador  virtuales}
+			\begin{figure}[H]
+				\centering
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/CreacionConmutadorVirtual}
+					\caption{Tenemos que entender que los conmutadores, son un equivalente a las interfaces de red}
+					\label{CreacionConmutador}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/ConmutadorCreado}
+					\caption{Creamos un conmutador que sólo va a funcionar como una red interna para nuestras \textit{VM}s }
+					\label{ConmutadorPrivado}
+				\end{minipage}
+			\end{figure}
+			
+		\subsubsection{Propiedades de la red}
+			\begin{figure}[H]
+				\centering
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/RedPrivada}
+					\caption{La direcciónIP del conmutador que hemos creado}
+					\label{IPConmutador}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/AdaptadorCreadoConExito}
+					\caption{Si nos vamos al apartado de recursos compartidos, vemos que se ha creado una nueva conexión de red.}
+					\label{NuevaTarjetaRed}
+				\end{minipage}
+			\end{figure}
+			
+		\subsubsection{Cambio del adaptador de red}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\textwidth]{Recursos/CambioAdaptador}
+				\caption{Establecemos el nuevo adaptador como el predefinido para las dos máquinas virutales}
+			\end{figure}
+		\subsubsection{Configuración del adaptador de red en las \textit{VM}s}
+			\begin{figure}[H]
+				\centering
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/redWindowsInterna}
+					\caption{Configuramos la ip estática de la máquina a mano, para que ya no consiga la ip del servidor DHCP sino de lo que le acabamos de escribir}
+					\label{IPEstaticaWindows}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/UbuntuConfiguracion}
+					\caption{editamos el fichero para establecer los mismos ajustes a mano que en el windows, tras esto debemos aplicar el comando \textit{netplay apply}}
+					\label{IPestaticaUbuntu}
+				\end{minipage}
+			\end{figure}
+		\subsection{Problema con el \textit{netplay apply}}
+				\begin{center}
+				\begin{minipage}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/Erroryml}
+					\captionof{figure}{Al ejecutar el comando me sale ese error.}
+					\label{applyError}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.55\textwidth}
+					Si miro el formato del fichero que estoy editando, me doy cuenta de que es un \textit{.yaml} el cuál es un lenguaje muy, pero muy, estricto con la identiación y el formato, el código del fichero, es correcto, lo que falta es identarlo de manera correcta, cada nivel tiene que tener exactamente 2 espacio hacía el interior y después de los : tiene que haber un espacio, así como tiene que haber un esapcio entre el - y el to.
+				\end{minipage}
+			\end{center}
+		\subsubsection{Solución del problema en el fichero \textit{yaml}}
+			\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/ymkcorrecto}
+				\caption{Corrijo los errores de indentación y sintaxis y ejecuto el comando para que se pueda aplicar el cambio.}
+				\label{yamlCorregido}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/Funciona}
+				\caption{Ejecuto el comando \textit{ip addr show eth0} para ver que ahora la ip de la máquina Ubuntu es la que deseo tener de manera estática.}
+				\label{IPestativaUbuntu}
+			\end{minipage}
+		\end{figure}
+		\subsection{Conexiones entre las máquinas con el cambio de ip}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\textwidth]{Recursos/establacerADaptadorInterna}
+				\caption{Creamos la regla que hace que todo lo que vaya hacía al red interna de nuestras máquinas virutales pase por la interfaz que hemos creado en el \textit{Hyper-V}}
+			\end{figure}
+			Adicionalemnte me doy cuenta de que el adaptador no tiene una red definida, por lo que la defino con los siguientes comando en \textit{PowerShell} como administrador
+			\begin{center}
+				\textit{New-NetIPAddress -InterfaceAlias "vEthernet (RedInterna)" -IPAddress 192.168.2.1 -PrefixLength 24}
+				\textit{Set-NetConnectionProfile -InterfaceAlias "vEthernet (RedInterna)" -NetworkCategory Private}
+			\end{center}
+			\subsubsection{Comunicación entre el \textit{WS} y las \textit{VM}}
+				\begin{figure}[H]
+					\centering
+					\begin{minipage}{0.45\textwidth}
+						\centering
+						\includegraphics[width=\textwidth]{Recursos/sshWSw11}
+						\caption{Establezco el \textit{RDP} en la dirección 192.168.2.100}
+						\label{VMWindows}
+					\end{minipage}
+					\hfill
+					\begin{minipage}{0.45\textwidth}
+						\centering
+						\includegraphics[width=\textwidth]{Recursos/sshWSUbuntuIPEstatia}
+						\caption{Ejecuto el comando \textit{ip addr show eth0} para ver que ahora la ip de la máquina Ubuntu es la que deseo tener de manera estática la cual es 192.168.2.101.}
+						\label{VMUbuntu}
+					\end{minipage}
+				\end{figure}
+			\subsubsection{Conexión de la máquina Ubuntu a la windows}
+				\begin{figure}[H]
+						\centering
+						\includegraphics[width=0.6\textwidth]{Recursos/sshWindowsUbuntu}
+						\caption{Conexión ssh desde la máquina windows a la máquina con Ubuntu}
+				\end{figure}
+\section{Instalar el servicio remoto \textit{RAS}}
 \end{document}
 
 %https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/5073f4ed-1e93-45e1-b039-6e30c385867c

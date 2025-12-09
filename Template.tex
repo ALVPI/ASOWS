@@ -665,6 +665,120 @@
 						\caption{Conexión ssh desde la máquina windows a la máquina con Ubuntu}
 				\end{figure}
 \section{Instalar el servicio remoto \textit{RAS}}
+\begin{center}
+	\begin{minipage}{0.4\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Recursos/InstalacionRAS}
+		\captionof{figure}{Instlación de los servicios RAS}
+		\label{RAS}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.55\textwidth}
+		\textit{RAS} son las siglas de \textit{Remote Access Service} el cuál nos permite acceder de manera remota y segura a redes corporativas, es decir hace las funciones de una \textbf{VPN} o un \textit{DA} (\textit{Direct Access}) el cual es una manera de conectarse directamente a al red coorporativa sin necesidad de instalarse una VPN.\\
+		Además la característica de enrutamiento lo que hace es permitir la comunicación de paquetes entre diferentes fragmentos de la red.\\ De tal manera que vamos a tener una \textit{gateway} para poder comunicarnos con los servidores de una red coorporativa sin tener que estar conectados a la red física (\textit{ethernet}) de la misma.\\
+		Tras la instalación reiniciamos el servidor para poder empezar a comunicarnos.
+	\end{minipage}
+\end{center}
+	\subsection{Configuración del \textit{RAS}}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.6\linewidth]{Recursos/RAS}
+			\caption{Vamos a la aplicación de \textbf{Enrutamiento y acceso remoto} y configuramos el DC}
+		\end{figure}
+			\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/TraduccionNAT}
+				\caption{Permite que los host de nuestro servidor, las máquinas virtuales, se conecten a internet empleando IPs públicas}
+				\label{TraduccionNAT}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/TraduccionNAT2}
+				\caption{Permitimos emplear las interfaces de redes que ya tenemos para conectarse a internet.}
+				\label{TraduccionNAT1}
+			\end{minipage}
+		\end{figure}
+			\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/TraduuccionNAT3}
+				\caption{	En este menú estamos seleccionando cómo queremos obtener los servicios \textit{DHCP} (Cómo obtenemos las direcciones IP públicas de nuestra red) y \textit{DNS} (el sistema que traduce de urls a direcciones IP).}
+				\label{TraduccionNAT3}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/AsignacionDireccionesNAT}
+				\caption{El rango de direcciones que tenemos para nuestas conexiones remotas}
+				\label{direcciones}
+			\end{minipage}
+		\end{figure}
+		\subsubsection{Prueba de \textit{curl}}
+			\begin{center}
+				\begin{minipage}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{Recursos/curl}
+					\captionof{figure}{hacemos una petición curl a una dirección ip porque aún no tenemos configurado el DNS en nuestra máquina}
+					\label{curl}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.55\textwidth}
+					\textit{curl} es una herramienta que nos permite lanzar peticiones \textit{http}/s y podemos cargar y descargar archivos desde servidores remotos, en el caso de la captura he descargado el código html de la página web a la que he lanzado la petición, aunque otro uso es probar APIs puesto que es una manera liviana y simple para que por línea de comandos podamos ver cómo y qué responde un servidor a una petición \textit{http/s}
+				\end{minipage}
+			\end{center}
+\section{Instalar el servicio DNS en nuestro \textit{WS2022}}
+		\begin{center}
+		\begin{minipage}{0.4\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{Recursos/InstalarServicioNombresAC}
+			\captionof{figure}{Proceso habitual desde el \textit{Hyper-V} descargamos el servicio de nombres para el \textit{AC}}
+			\label{SNAC}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.55\textwidth}
+			Me pregunto ¿por qué es necesario descargarse otro servicio más? la respuesta a esta pregunta, es porque el \textit{ADDS} (\textit{Active Directory Domain Services}) es clave para poder tener una gestión centralizada y jerárquica de todos los recursos, ya sean hardware o de usuarios. \\ Centralizando la autenticación y con esa cuenta el usuario puede acceder a cualquier servicio dentro de nuestro servidor. Además de instalar el \textit{DNS} para poder encontrar los recursos dentro de nuestra red sin tener que aprenderse las direcciones IPs.
+		\end{minipage}
+	\end{center}
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/Promote}
+			\caption{Promover implica convertir el \textit{WS2022} en el centro de control de la red. Es decir va a asumir toda la autoridad sobre nuestra red.}
+			\label{VMWindowsPromote}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/arbol}
+			\caption{Como estamos haciendo un \textit{AC} desde cero, la opción que no interesa es la seleccionada, puesto que la primera es para añadir servidores y la segunda es para añadir dominios hijos a los que ya tenemos.}
+			\label{arbol}
+		\end{minipage}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/nuevoArbol}
+			\caption{Estamos definiendo la versión mínima de Windows Server que soportará la estructura de \textit{AC}, lo cual determina las características de \textit{AD DS} que estarán disponibles. \textbf{Contraseña: ASO\_2025WIndowsServer}.}
+			\label{margarita}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/NetBios}
+			\caption{\textit{Network Basic Input/Output System} es un sistema para mejorar la compatiblidad consistemas antiguos, además de que sirve como un alias corto dentro de la red. Tras cofigurar esto, le damos a siguiente, siguiente hasta que nos aparezca la opción de instalar, posteriormente reiniciamos la máquina.}
+			\label{NetBiosl}
+		\end{minipage}
+	\end{figure}
+
+\subsubsection{¿Qué es un nivel funcional en el contexto del \textit{Active Directory}?}
+
+	
 \end{document}
 
 %https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/5073f4ed-1e93-45e1-b039-6e30c385867c

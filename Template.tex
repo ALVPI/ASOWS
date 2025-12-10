@@ -949,9 +949,18 @@
 				\end{minipage}
 				\hfill
 				\begin{minipage}{0.55\textwidth}
-					\textit{PAM (Pluggable Authentication Modules}) es un marco de trabajo de bajo nivel en Linux que separa los programas de la autenticación real. Cuando un programa (como\textit{ login, sudo o sshd}) necesita autenticar a un usuario, simplemente llama a la biblioteca PAM y consulta los archivos de configuración (\textit{/etc/pam.d/*}) para determinar qué módulos debe ejecutar.
+					\textit{PAM (Pluggable Authentication Modules}) es un marco de trabajo de bajo nivel en Linux que separa los programas de la autenticación real. Cuando un programa (como\textit{ login, sudo o sshd}) necesita autenticar a un usuario, simplemente llama a la biblioteca PAM y consulta los archivos de configuración (\textit{/etc/pam.d/*}) para determinar qué módulos debe ejecutar.\\
+					En concreto al añadir la línea \textit{session optional pam\_mkhomedir.so skel=/etc/skel umask=077 } lo que estoy haciendo es: crear el directio\textit{ /home} copiando los ficheros el directorio \textit{/etc/skel} dándole el permisos 700 (rwx- --- - ---) para que sólo el usuario pueda acceder a ese home  (para eso emplea el módulo \textit{mkhomdir.so}). Además es importante colocarlo después del módulo \textit{pam\_sss.so} porque este es el encargado de confirmar la identidad del usuario dentro del \textit{AD}.
 				\end{minipage}
 			\end{center}
+		\subsubsection{\textit{Login} en el dominio con un \textit{/HOME} creado}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/homeCreado}
+				\caption{Efectivamente ahora hay un directorio home para el Administrador dentro del dominio en la máquina.}
+			\end{figure}
+\section{Comentarios finales}
+	Aunque los usos del \textit{AD} son muy amplios, en concreto en esta práctica me he centrado en el uso de un autenticador único para poder realizar el inicio de sesión en diferentes máquinas, facilitando la adminitración de los pcs dentro de un dominio. Para esto tenemos que tener en cuenta que hemos aplicado un sistema de autenticación único, con un DNS (en ambas direcciones) para poder resolver los hosts con nombre y con IP, además de virtualizar empleando la tecología \textit{Hyper-V} de una manera muy simple y sencilla, crear conmutadores de red para estas máquinas virtuales y permitir tanto la conexión a internet como la comunicación entre ellas, la primera de las tareas empleando el servidor como orquestador de las redes y las máquinas de tal manera que todo el tráfico pasa por él (tiene sentido puesto que el DNS está instalado en nuestro servidor añadiéndole una capa de seguridad puesto que manejamos direcciones privadas y públicas en el espacio de direcciones.)
 \end{document}
 
 %https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/5073f4ed-1e93-45e1-b039-6e30c385867c
@@ -959,3 +968,4 @@
 %https://learn.microsoft.com/en-us/windows-server/
 %https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/overview
 %https://community.nethserver.org/t/active-directory-couldnt-join-realm-insufficient-permissions-to-join-the-domain/24672
+%https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage-user-accounts-in-windows-server

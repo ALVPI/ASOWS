@@ -722,7 +722,7 @@
 				\begin{minipage}{0.4\textwidth}
 					\centering
 					\includegraphics[width=\linewidth]{Recursos/curl}
-					\captionof{figure}{hacemos una petición curl a una dirección ip porque aún no tenemos configurado el DNS en nuestra máquina}
+					\captionof{figure}{Hacemos una petición curl a una dirección ip porque aún no tenemos configurado el DNS en nuestra máquina}
 					\label{curl}
 				\end{minipage}
 				\hfill
@@ -776,12 +776,186 @@
 		\end{minipage}
 	\end{figure}
 
-\subsubsection{¿Qué es un nivel funcional en el contexto del \textit{Active Directory}?}
-
-	
+		\subsubsection{¿Qué es un nivel funcional en el contexto del \textit{Active Directory}?}
+			 Es la versión mínima de OS para que pueda emplear los servicios del servidor. Es decir, si nos fijamos en \ref{arbol}, la versión mímima del OS para que el server pueda funcionar como \textit{DC} (Controlador de Dominio) de tal manera que si alguna máquina se intenta unir a nuestra red o ser un árbol de nuestro directorio, tendrá que ser una versión posterior a la del 2016 (está inclusive), con esto, nos aseguramos de poder ofrecer servicios más modernos y reducimos el riesgo de tener vulnerabilidades, puesto que cuanto más modernos sea la versión del OS menos vulnerabilidades documentadas habrá en la red para realizar ataques, así como menos tiempo tendrá un atacante para concer y explotar vulnerabilidades de las diferentes \textit{releases}
+	 
+	 \subsection{Revisión de si el cambio de nuestro servidor al rol de \textit{AD} ha sido realizada correctamente}
+		 \begin{figure}[H]
+		 		\centering
+		 		\includegraphics[width=0.6\linewidth]{Recursos/PromocionCorrecta}
+		 		\captionof{figure}{Pantallazo de las propiedades del servidor local como controlador de \textit{AD}}
+		 		\label{ADServerl}
+		 \end{figure}
+		 \begin{center}
+		 	\begin{minipage}{0.4\textwidth}
+		 		\centering
+		 		\includegraphics[width=\linewidth]{Recursos/AppDNS}
+		 		\captionof{figure}{Servicio DNS en el \textit{WS22}}
+		 		\label{DNS}
+		 	\end{minipage}
+		 	\hfill
+		 	\begin{minipage}{0.55\textwidth}
+		 		\textit{ad-aso02.lab} es la zona de traducción de direcciones ips a nombres de dominio. Además de indicar que nuestro servidor va a ser la fuente de información para el DNS.\\
+		 		Mientras que las carpetas que se ven en el directorio son las necesarias para que los clientes u otros serivicios puedan encontrar los servicios clave del \textit{AD}.\\ 
+		 		Este servicio es crítico puesto que sin el DNS, ningún servicio/pc/cliente sabría como comunicarse con los recursos que necesita.
+		 	\end{minipage}
+		 \end{center}
+	\subsection{Creación de una nueva zona DNS para la búsqueda inversa}	
+		 \begin{center}
+			\begin{minipage}{0.4\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/DNSInverso1}
+				\captionof{figure}{Servicio DNS inverso en el \textit{WS22}}
+				\label{DNSInverso}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.55\textwidth}
+				El DNS Inverso es el proceso de traducción de una dirección IP a nombre del dominio, es decir traducir la 192.168.2.100 a \textit{TiniWindows}, esto ofrece ventajas de seguridad, pues no permite saturar la red con direcciones ips que no tienen asignadas un nombre de dominio  y además nos permite tener un monitoreo de red más legibles puesto que ya no tenemos que memorizas direcciones ips sino nombres de dominio lo que resulta más sencillo puesto que están escritas en lenguaje humano y como una una ristra de números.
+			\end{minipage}
+		\end{center}
+		\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/DNSInverso2}
+				\caption{Identificamos el rango de direcciones IPs sobre la que vamos a hacer la traducción inversa, en mi caso \textit{192.168.2.xxx} para abarcar toda la subred.}
+				\label{NuevaZona}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/DNSInverso3}
+				\caption{Hemos creado la zona, y esta se propagará a todos los \textit{DC} }
+				\label{ZonaCreada}
+			\end{minipage}
+		\end{figure}
+		\begin{center}
+			\begin{minipage}{0.4\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{Recursos/Puntero}
+				\captionof{figure}{Servicio DNS en el \textit{WS22}}
+				\label{Puntero}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.55\textwidth}
+				Un puntero es la creación de una zona en específico dentro de la zona de búsqueda inversa que hemos creado. Mapean la dirección ip a un nombre de dominio específico. las dosque hemos creado son para la gateway y para la \textit{VM} de windws.
+			\end{minipage}
+		\end{center}
+	\subsubsection{Añade en la zona directa los registros de tipo A}
+		Los registros de tipo A son aquellos que añaden un host y su dirección ip dentro de nuestro servicio DNS, identíficándolo de manera única y ofreciendo a los clientes una manera directa de acceder a ellos.
+		\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/hostAUbuntu}
+				\caption{HostA para poder acceder a la máquina Ubuntu con IP \textit{192.168.2.101}}
+				\label{AUbuntu}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/hostAWindows}
+				\caption{ HostA para poder acceder a la máquina windows con la dirección IP \textit{192.168.2.100}}
+				\label{AWindows}
+			\end{minipage}
+		\end{figure}
+	\subsubsection{Agregar \textit{TinyWindows} a nuestro dominio}
+		\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/TinyWindows}
+				\caption{Añadimos la máquina virtual \textit{TinyWindows} como un miembro del dominio}
+				\label{twdominio}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/Exito}
+				\caption{Tras darle a aceptar aparecerá un popup que nos pide un usuario y contraseña con permisos en el dominio, tecleamos la de la cuenta de administrador del \textit{WS} y ya hemos terminado}
+				\label{twexito}
+			\end{minipage}
+		\end{figure}
+	\subsubsection{Agregar la \textit{VM} con Ubuntu al dominio}
+	\begin{center}
+		\begin{minipage}{0.4\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/instalacionCosasUbuntu}
+			\captionof{figure}{Tras actualizar el sistema, vemos que tenemos conexión a internet y me instalo todos los paquetes que menciona el guión.}
+			\label{fig:instalacion}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.55\textwidth}
+			\begin{itemize}
+				\item \textbf{\texttt{sssd}}: Demonio central (\textit{System Security Services Daemon}) para la autenticación e identificación remota de usuarios y grupos (AD, LDAP), con soporte de caché.
+				\item \textbf{\texttt{sssd-tools}}: Contiene las herramientas de línea de comandos necesarias para la administración y el diagnóstico del servicio SSSD (por ejemplo, \texttt{sssctl}).
+				\item \textbf{\texttt{libnss-sss}}: Módulo del \textit{Name Service Switch} (NSS). Permite al sistema operativo obtener información de usuarios y grupos a través del demonio SSSD.
+				\item \textbf{\texttt{libpam-sss}}: Módulo de \textit{Pluggable Authentication Modules} (PAM). Se encarga de la autenticación de usuarios de dominio durante el proceso de inicio de sesión.
+				\item \textbf{\texttt{adcli}}: Herramienta esencial de línea de comandos para unir la máquina Linux a un dominio de Active Directory.
+				\item \textbf{\texttt{samba-common-bin}}: Proporciona utilidades y librerías de bajo nivel necesarias para la interoperabilidad con protocolos de red de Windows (Kerberos, NTLM).
+				\item \textbf{\texttt{oddjob}}: Servicio que facilita la ejecución segura de tareas privilegiadas (como \textit{root}) a solicitud de usuarios no privilegiados.
+				\item \textbf{\texttt{oddjob-mkhomedir}}: Un complemento de \texttt{oddjob} que crea automáticamente el directorio personal (\texttt{/home/usuario}) para el usuario de dominio en su primer inicio de sesión.
+				\item \textbf{\texttt{packagekit}}: Un conjunto de herramientas de alto nivel y un demonio para la gestión gráfica y automática de paquetes, comúnmente usado en entornos de escritorio.
+			\end{itemize}
+		\end{minipage}
+	\end{center}
+		\begin{figure}[H]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/realm}
+			\caption{En la terminal, \textit{realm} nos da toda la información de lo que necesitamos para "conectarnos" al dominio y casualmente, tenemos todas las dependencias previamente instaladas por lo que vamos a proceder a conectarnos al dominio }
+			\label{realm}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Recursos/ubutnudominio}
+			\caption{He empleado las credenciales de administrador para unirme al domino y sé que estoy dentro pusto que en \textit{configured} aparece \textit{kerberos-member} es decir que he pasado el filtro de kerberos para autenticación y estamos dentro del dominio.}
+			\label{ububntudominio}
+		\end{minipage}
+	\end{figure}
+	\subsubsection{Comprobación de que ambas \textit{VM} se han unido al dominio del \textit{WS2022}}
+		\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\textwidth]{Recursos/maquinasUnidasipi}
+				caption{Efectivamente en el menú de \textit{Usuarios y equopos de Active Directory} vemos que dentro del apartado de ordenadores aparecen nuestras dos máquinas virtaules. Y aunque en el guión se menciona que puede dar problemas y que hay que desactivar la búsqueda inversa, en caso de que el dns no pueda resolver el nombre del host desde la IP, como he configurado bien los punteros y los hosts, no me ha sido necesario este paso.}
+		\end{figure}
+		
+	\subsection{\textit{Login} como administrador en las \textit{VM}s }
+		\begin{figure}[H]
+			\centering
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/admintiny}
+				\caption{Inicio de sesión exitosa en el dominio del \textit{AC} dentro de la máquina virutal, para entrar a esta opción es simplemente, en la pantalla de inicio de sesión darle a otro usuario y teclear las credenciales de Administrador.}
+				\label{admintiny}
+			\end{minipage}
+			\hfill
+			\begin{minipage}{0.45\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{Recursos/adminUbuntu}
+				\caption{Como he unido bien la máquina ubuntu al AD, ahora puedo iniciar sesión como administrador, pero ojo, no tengo directorio \textit{/home}}
+				\label{adminububntudominio}
+			\end{minipage}
+		\end{figure}
+		\subsubsection{Asignación del directorio \textit{HOME} para la máquina Ubuntu}
+				\begin{center}
+				\begin{minipage}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{Recursos/pam}
+					\captionof{figure}{Tras actualizar el sistema, vemos que tenemos conexión a internet y me instalo todos los paquetes que menciona el guión.}
+					\label{ModificacionPAM}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.55\textwidth}
+					\textit{PAM (Pluggable Authentication Modules}) es un marco de trabajo de bajo nivel en Linux que separa los programas de la autenticación real. Cuando un programa (como\textit{ login, sudo o sshd}) necesita autenticar a un usuario, simplemente llama a la biblioteca PAM y consulta los archivos de configuración (\textit{/etc/pam.d/*}) para determinar qué módulos debe ejecutar.
+				\end{minipage}
+			\end{center}
 \end{document}
 
 %https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/5073f4ed-1e93-45e1-b039-6e30c385867c
 %https://www.palentino.es/pdfs/Windows-Server-2022-Libro-Castellano-by-palentino.pdf
 %https://learn.microsoft.com/en-us/windows-server/
 %https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/overview
+%https://community.nethserver.org/t/active-directory-couldnt-join-realm-insufficient-permissions-to-join-the-domain/24672

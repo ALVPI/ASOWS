@@ -20,8 +20,10 @@
 \usepackage{colortbl}
 \usepackage{booktabs}
 \usepackage{amssymb}
+\usepackage{multicol}
 \usepackage[hypcap]{caption}
-
+\usepackage[backend=biber, style=apa]{biblatex} % Cambia 'apa' si usas otro estilo
+\addbibresource{bibliografia.bib}
 
 % Listings para código
 \usepackage{listings}
@@ -65,8 +67,7 @@
 \titleformat{\subsubsection}{\normalfont\normalsize\bfseries}{\hspace{2em}\thesubsubsection}{1em}{}
 
 % Datos de la portada
-\title{\textbf{CREACIÓN DE UN DIRECTORIO ACTIVO CON
-		WINDOWS SERVER 2022 }}
+\title{\textbf{Creación de un directorio activo en un Windows Server2022 }}
 \author{\textbf{\small Álvaro López Primo}}
 \date{}
 
@@ -83,7 +84,7 @@
 \definecolor{bordercolor}{RGB}{150, 150, 150}   % Color de bordes
 
 \begin{document}
-	
+
 	\begin{titlepage}
 		\centering
 		\includegraphics[scale=0.3]{Recursos/UVA-3881270087.pdf}\\[0.5cm]
@@ -97,8 +98,21 @@
 	\end{titlepage}
 	
 	\renewcommand{\contentsname}{Índice}
-	\tableofcontents 
-	\newpage
+	\begin{multicols}{2} 
+		\tableofcontents
+	\end{multicols} 
+
+	% --- FIN DEL ÍNDICE DE TABLAS A DOS COLUMNAS ---
+	
+	\clearpage
+	
+	% --- INICIO DEL ÍNDICE DE FIGURAS A DOS COLUMNAS ---
+	\begin{multicols}{2}
+		\listoffigures
+	\end{multicols}
+	% --- FIN DEL ÍNDICE DE FIGURAS A DOS COLUMNAS ---
+	
+	\clearpage
 \section{Introducción}
 	En este apartado responderemos a algunas preguntas antes de empezar con el proceso de instalación de windows server 2022.
 	\subsection{¿Cuáles son las principales diferencias entre Windows server 2022 y un Windows 11?}
@@ -223,7 +237,7 @@
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.6\linewidth]{Recursos/InstalacionCompletada.png}
-			\caption{La contraseña de la cuenta de administrador (la cuál va a tener como \textit{password: wmLG9N7n}) }
+			\caption{En este punto he tenido que establecer una contraseña para poder acceder al usuario adminitrador en el \textit{WS} }
 		\end{figure}
 	\subsection{Intalación de drivers}
 		\begin{center}
@@ -377,7 +391,7 @@
 				\end{minipage}
 				\hfill
 				\begin{minipage}{0.55\textwidth}
-					\textit{Hyper-V} es una tecnología de virtualización de Windows, que permite alojar y ejecutar otras \textit{Virtual Machines}(VM) .\\
+					\textit{Hyper-V} es una tecnología de virtualización de Windows, que permite alojar y ejecutar otras \textit{Virtual Machines}(VM).\\
 					El \textbf{conmutador de red}  funciona como un \textit{switch} permitiendo que las máquinas virtuales se comuniquen entre sí y que las mismas tengan conexión a internet (empleando nuestra tarjeta de red para ello).
 				\end{minipage}
 			\end{center}
@@ -961,6 +975,10 @@
 			\end{figure}
 \section{Comentarios finales}
 	Aunque los usos del \textit{AD} son muy amplios, en concreto en esta práctica me he centrado en el uso de un autenticador único para poder realizar el inicio de sesión en diferentes máquinas, facilitando la adminitración de los pcs dentro de un dominio. Para esto tenemos que tener en cuenta que hemos aplicado un sistema de autenticación único, con un DNS (en ambas direcciones) para poder resolver los hosts con nombre y con IP, además de virtualizar empleando la tecología \textit{Hyper-V} de una manera muy simple y sencilla, crear conmutadores de red para estas máquinas virtuales y permitir tanto la conexión a internet como la comunicación entre ellas, la primera de las tareas empleando el servidor como orquestador de las redes y las máquinas de tal manera que todo el tráfico pasa por él (tiene sentido puesto que el DNS está instalado en nuestro servidor añadiéndole una capa de seguridad puesto que manejamos direcciones privadas y públicas en el espacio de direcciones.)
+	\newpage
+	\addcontentsline{toc}{section}{Bibliografía}
+	\nocite{*}
+	\printbibliography
 \end{document}
 
 %https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-rdpbcgr/5073f4ed-1e93-45e1-b039-6e30c385867c
